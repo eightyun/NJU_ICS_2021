@@ -24,5 +24,5 @@ void init_isa() {
   memcpy(guest_to_host(RESET_VECTOR), img, sizeof(img));
 
   /* Initialize this virtual computer system. */
-  restart();
+  restart(); // 初始化寄存器
 }

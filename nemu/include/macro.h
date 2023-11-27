@@ -11,7 +11,7 @@
 #define STRLEN(CONST_STR) (sizeof(CONST_STR) - 1)
 
 // calculate the length of an array
-#define ARRLEN(arr) (int)(sizeof(arr) / sizeof(arr[0]))
+#define ARRLEN(arr) (int)(sizeof(arr) / sizeof(arr[0])) // 计算数组长度  整个字节数除以数组第一个元素的字节数
 
 // macro concatenation
 #define concat_temp(x, y) x ## y

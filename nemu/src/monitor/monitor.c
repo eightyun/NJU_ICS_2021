@@ -1,6 +1,8 @@
 #include <isa.h>
 #include <memory/paddr.h>
 
+// 进行一些和monitor相关的初始化工作 我们需要将客户程序读入到客户计算机中 这件事是monitor来负责的
+
 void init_rand();
 void init_log(const char *log_file);
 void init_mem();
@@ -18,7 +20,7 @@ static void welcome() {
   printf("Welcome to %s-NEMU!\n", ASNI_FMT(str(__GUEST_ISA__), ASNI_FG_YELLOW ASNI_BG_RED));
   printf("For help, type \"help\"\n");
   Log("Exercise: Please remove me in the source code and compile NEMU again.");
-  assert(0);
+  //assert(0);
 }
 
 #ifndef CONFIG_TARGET_AM

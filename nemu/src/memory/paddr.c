@@ -6,7 +6,7 @@
 #if   defined(CONFIG_TARGET_AM)
 static uint8_t *pmem = NULL;
 #else
-static uint8_t pmem[CONFIG_MSIZE] PG_ALIGN = {};
+static uint8_t pmem[CONFIG_MSIZE] PG_ALIGN = {}; // 存储器
 #endif
 
 uint8_t* guest_to_host(paddr_t paddr) { return pmem + paddr - CONFIG_MBASE; }

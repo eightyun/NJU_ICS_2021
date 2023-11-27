@@ -6,3 +6,4 @@ bootblock.o: $(SRCS) Makefile
 
 clean:
 	rm -rf *.o
+
