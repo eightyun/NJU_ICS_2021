@@ -58,7 +58,7 @@ def_THelper(main) {
   return table_inv(s);
 };
 
-int isa_fetch_decode(Decode *s) {
+int isa_fetch_decode(Decode *s) {  // 返回一个编号idx, 用于对g_exec_table这一数组进行索引
   s->isa.instr.val = instr_fetch(&s->snpc, 4);
   int idx = table_main(s);
   return idx;

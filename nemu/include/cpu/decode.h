@@ -26,9 +26,9 @@ typedef struct Decode {
   IFDEF(CONFIG_ITRACE, char logbuf[128]);
 } Decode;
 
-#define id_src1 (&s->src1)
-#define id_src2 (&s->src2)
-#define id_dest (&s->dest)
+#define id_src1 (&s->src1)  // 源操作数
+#define id_src2 (&s->src2)  // 源操作数
+#define id_dest (&s->dest)  // 目的操作数
 
 
 // `INSTR_LIST` is defined at src/isa/$ISA/include/isa-all-instr.h
@@ -37,20 +37,20 @@ typedef struct Decode {
 
 
 // --- prototype of table helpers ---
-#define def_THelper(name) static inline int concat(table_, name) (Decode *s)
+#define def_THelper(name) static inline int concat(table_, name) (Decode *s) // 表格辅助函数
 #define def_THelper_body(name) def_THelper(name) { return concat(EXEC_ID_, name); }
 #define def_all_THelper() MAP(INSTR_LIST, def_THelper_body)
 
 
 // --- prototype of decode helpers ---
-#define def_DHelper(name) void concat(decode_, name) (Decode *s, int width)
+#define def_DHelper(name) void concat(decode_, name) (Decode *s, int width) // 译码辅助函数
 // empty decode helper
 static inline def_DHelper(empty) {}
 
 
 // --- pattern matching mechanism ---
 __attribute__((always_inline))
-static inline void pattern_decode(const char *str, int len,
+static inline void pattern_decode(const char *str, int len,       // 用于将模式字符串转换成3个整型变量
     uint32_t *key, uint32_t *mask, uint32_t *shift) {
   uint32_t __key = 0, __mask = 0, __shift = 0;
 #define macro(i) \
