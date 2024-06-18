@@ -26,8 +26,8 @@ typedef struct Decode {
   IFDEF(CONFIG_ITRACE, char logbuf[128]);
 } Decode;
 
-#define id_src1 (&s->src1)  // 源操作数
-#define id_src2 (&s->src2)  // 源操作数
+#define id_src1 (&s->src1)  // 源操作数 1
+#define id_src2 (&s->src2)  // 源操作数 2
 #define id_dest (&s->dest)  // 目的操作数
 
 
@@ -106,7 +106,6 @@ finish:
   *mask = __mask >> __shift;
   *shift = __shift;
 }
-
 
 // --- pattern matching wrappers for decode ---
 #define def_INSTR_raw(decode_fun, pattern, body) do { \

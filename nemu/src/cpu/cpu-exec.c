@@ -33,6 +33,7 @@ static void trace_and_difftest(Decode *_this, vaddr_t dnpc)
   IFDEF(CONFIG_WATCHPOINT, wp_difftest()); 
 }
 
+
 #include <isa-exec.h>
 
 #define FILL_EXEC_TABLE(name) [concat(EXEC_ID_, name)] = concat(exec_, name),

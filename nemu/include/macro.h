@@ -5,10 +5,10 @@
 
 // macro stringizing
 #define str_temp(x) #x
-#define str(x) str_temp(x)
+#define str(x) str_temp(x) // 将传入的参数转换为字符串
 
 // strlen() for string constant
-#define STRLEN(CONST_STR) (sizeof(CONST_STR) - 1)
+#define STRLEN(CONST_STR) (sizeof(CONST_STR) - 1)   // 用于计算字符串常量的长度
 
 // calculate the length of an array
 #define ARRLEN(arr) (int)(sizeof(arr) / sizeof(arr[0])) // 计算数组长度  整个字节数除以数组第一个元素的字节数
@@ -70,10 +70,10 @@
 
 #define BITMASK(bits) ((1ull << (bits)) - 1)
 #define BITS(x, hi, lo) (((x) >> (lo)) & BITMASK((hi) - (lo) + 1)) // similar to x[hi:lo] in verilog
-#define SEXT(x, len) ({ struct { int64_t n : len; } __x = { .n = x }; (int64_t)__x.n; })
+#define SEXT(x, len) ({ struct { int64_t n : len; } __x = { .n = x }; (int64_t)__x.n; }) // 实现从给定长度 len 到 64 位整数的符号扩展
 
-#define ROUNDUP(a, sz)   ((((uintptr_t)a) + (sz) - 1) & ~((sz) - 1))
-#define ROUNDDOWN(a, sz) ((((uintptr_t)a)) & ~((sz) - 1))
+#define ROUNDUP(a, sz)   ((((uintptr_t)a) + (sz) - 1) & ~((sz) - 1)) // 一个大于等于 a 的、按 sz 字节对齐的数值。
+#define ROUNDDOWN(a, sz) ((((uintptr_t)a)) & ~((sz) - 1)) // 得到一个小于等于 a 的、按 sz 字节对齐的数值。
 
 #define PG_ALIGN __attribute((aligned(4096)))
 
