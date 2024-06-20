@@ -6,7 +6,7 @@
 
 size_t strlen(const char *s) 
 {
-  char * p = s ;
+  const char * p = s ;
   while(*p)
     p++ ;
 
@@ -23,7 +23,7 @@ char *strcpy(char *dst, const char *src)
 
   char * original_dst = dst ;
   // 逐字符复制源字符串到目标字符串，直到遇到终止符 '\0'
-  while((*dst++ = *src++))
+  while((*dst++ = *src++)) ;
   // 返回目标字符串的起始地址
   return original_dst ;
 }
@@ -40,7 +40,7 @@ char *strncpy(char *dst, const char *src, size_t n)
     dst[i] = src[i] ;
 
   for( ; i < n ; i++)
-    src[i] = '\0' ;
+    dst[i] = '\0' ;
 
   return original_dst ;
 }
@@ -55,7 +55,7 @@ char *strcat(char *dst, const char *src)
     dst++ ;
 
   // 逐字符复制源字符串到目标字符串
-  while((*dst++ = *stc++)) ;
+  while((*dst++ = *src++)) ;
 
   return original_dst ;
 }
@@ -65,8 +65,8 @@ int strcmp(const char *s1, const char *s2)
 {
   while(*s1 && (*s1 == *s2))
   {
-    *s1++ ; 
-    *s2++ ;
+    ++s1 ; 
+    ++s2 ;
   }
 
   return *(unsigned char *)s1 - *(unsigned char *)s2 ;
@@ -77,8 +77,8 @@ int strncmp(const char *s1, const char *s2, size_t n)
 {
     while(n > 0 && *s1 && (*s1 == *s2))
     {
-      *s1++ ;
-      *s2++ ;
+      ++s1 ;
+      ++s2 ;
       n-- ;
     }
 
@@ -132,7 +132,7 @@ void *memcpy(void *out, const void *in, size_t n)
   while (n--)
       *d++ = *s++;
 
-  return dest;
+  return d;
 }
 
 //memcmp 函数用于比较内存块中的数据。它逐字节比较两个内存块的内容，直到找到不同的字节或比较完指定的字节数。
