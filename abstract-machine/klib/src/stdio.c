@@ -5,9 +5,9 @@
 
 #if !defined(__ISA_NATIVE__) || defined(__NATIVE_USE_KLIB__)
 
+//利用内联汇编实现了系统调用，通过加载系统调用号和字符到相应的寄存器，并触发系统调用来实现字符输出的功能
 void putchar(char c) 
 {
-    // 假设这是一个系统调用，直接将字符输出到控制台
     asm volatile (
         "mv a0, %0\n"    // 将系统调用号放入 a0 中
         "mv a1, %1\n"    // 将字符放入 a1 中
