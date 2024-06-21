@@ -3,6 +3,7 @@
 #include <cpu/difftest.h>
 #include <isa-all-instr.h>
 #include <locale.h>
+#include <../utils/trace_chain.h>
 
 /* The assembly code of instructions executed is only output to the screen
  * when the number of instructions executed is less than this value.
@@ -44,6 +45,7 @@ static const void* g_exec_table[TOTAL_INSTR] = {
 static void fetch_decode_exec_updatepc(Decode *s) 
 {
   fetch_decode(s, cpu.pc);
+  IFDEF(CONFIG_ITRACE, trace_inst(s->pc, s->isa.instr.val));
   s->EHelper(s);      // 执行辅助函数
   cpu.pc = s->dnpc;
 }
@@ -58,6 +60,7 @@ static void statistic() {
 }
 
 void assert_fail_msg() {
+  display_inst();
   isa_reg_display();
   statistic();
 }
