@@ -31,6 +31,10 @@ CFLAGS_BUILD += $(if $(CONFIG_CC_LTO),-flto,)
 CFLAGS_BUILD += $(if $(CONFIG_CC_DEBUG),-ggdb3,)
 CFLAGS_BUILD += $(if $(CONFIG_CC_ASAN),-fsanitize=address,)
 CFLAGS_TRACE += -DITRACE_COND=$(if $(CONFIG_ITRACE_COND),$(call remove_quote,$(CONFIG_ITRACE_COND)),true)
+
+# Add include path for itrace_chain.h
+CFLAGS += -I$(NEMU_HOME)/src/utils
+
 CFLAGS  += $(CFLAGS_BUILD) $(CFLAGS_TRACE) -D__GUEST_ISA__=$(GUEST_ISA)
 LDFLAGS += $(CFLAGS_BUILD)
 
