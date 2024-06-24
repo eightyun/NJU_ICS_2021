@@ -67,11 +67,11 @@ static int parse_args(int argc, char *argv[]) {
   int o;
   while ( (o = getopt_long(argc, argv, "-bhl:d:p:", table, NULL)) != -1) {
     switch (o) {
-      case 'b': sdb_set_batch_mode(); break;
-      case 'p': sscanf(optarg, "%d", &difftest_port); break;
-      case 'l': log_file = optarg; break;
-      case 'd': diff_so_file = optarg; break;
-      case 1: img_file = optarg; return optind - 1;
+      case 'b': sdb_set_batch_mode(); break;   // 设置批处理模式
+      case 'p': sscanf(optarg, "%d", &difftest_port); break;  // 解析端口号
+      case 'l': log_file = optarg; break;    // 设置日志文件
+      case 'd': diff_so_file = optarg; break;   // 设置参考库文件
+      case 1: img_file = optarg; return optind - 1;   // 设置镜像文件
       default:
         printf("Usage: %s [OPTION...] IMAGE [args]\n\n", argv[0]);
         printf("\t-b,--batch              run with batch mode\n");
