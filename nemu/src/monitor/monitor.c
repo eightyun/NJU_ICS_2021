@@ -11,6 +11,8 @@ void init_device();
 void init_sdb();
 void init_disasm(const char *triple);
 
+void parse_elf(const char *elf_file); // ftrace相关
+
 static void welcome() {
   Log("Trace: %s", MUXDEF(CONFIG_TRACE, ASNI_FMT("ON", ASNI_FG_GREEN), ASNI_FMT("OFF", ASNI_FG_RED)));
   IFDEF(CONFIG_TRACE, Log("If trace is enabled, a log file will be generated "
@@ -32,6 +34,8 @@ static char *log_file = NULL;
 static char *diff_so_file = NULL;
 static char *img_file = NULL;
 static int difftest_port = 1234;
+
+static char *elf_file = NULL;     // ftrace 相关
 
 static long load_img() {
   if (img_file == NULL) {
@@ -55,6 +59,7 @@ static long load_img() {
   return size;
 }
 
+// 用于解析命令行参数
 static int parse_args(int argc, char *argv[]) {
   const struct option table[] = {
     {"batch"    , no_argument      , NULL, 'b'},
@@ -63,21 +68,24 @@ static int parse_args(int argc, char *argv[]) {
     {"port"     , required_argument, NULL, 'p'},
     {"help"     , no_argument      , NULL, 'h'},
     {0          , 0                , NULL,  0 },
+    {"elf"      , required_argument, NULL, 'e'},
   };
   int o;
-  while ( (o = getopt_long(argc, argv, "-bhl:d:p:", table, NULL)) != -1) {
+  while ( (o = getopt_long(argc, argv, "-bhl:d:p:e:", table, NULL)) != -1) {
     switch (o) {
       case 'b': sdb_set_batch_mode(); break;   // 设置批处理模式
       case 'p': sscanf(optarg, "%d", &difftest_port); break;  // 解析端口号
       case 'l': log_file = optarg; break;    // 设置日志文件
       case 'd': diff_so_file = optarg; break;   // 设置参考库文件
       case 1: img_file = optarg; return optind - 1;   // 设置镜像文件
+      case 'e': elf_file = optarg; break;       // 设置elf文件
       default:
         printf("Usage: %s [OPTION...] IMAGE [args]\n\n", argv[0]);
         printf("\t-b,--batch              run with batch mode\n");
         printf("\t-l,--log=FILE           output log to FILE\n");
         printf("\t-d,--diff=REF_SO        run DiffTest with reference REF_SO\n");
         printf("\t-p,--port=PORT          run DiffTest with port PORT\n");
+        printf("\t-e,--elf=FILE           elf file to be parsed\n");
         printf("\n");
         exit(0);
     }
@@ -85,9 +93,13 @@ static int parse_args(int argc, char *argv[]) {
   return 0;
 }
 
-void init_monitor(int argc, char *argv[]) {
+void init_monitor(int argc, char *argv[]) 
+{
   /* Perform some global initialization. */
 
+  /* Initialize elf */
+  parse_elf(elf_file);
+  
   /* Parse arguments. */
   parse_args(argc, argv);
 
