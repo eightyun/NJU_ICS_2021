@@ -1,6 +1,8 @@
 #include<utils.h>
+#include<trace_chain.h>
 
-def_EHelper(auipc) {
+def_EHelper(auipc) 
+{
   rtl_li(s, ddest, id_src1->imm + s->pc);
 }
 
@@ -17,6 +19,12 @@ def_EHelper(auipc) {
 
 def_EHelper(jal) 
 {
+    //  trace_func_call 记录函数调用
+    if (s->dest.preg != NULL && *s->dest.preg == 1) 
+    { // x1: return address for jumps
+        trace_func_call(s->pc, s->dnpc, false);
+    }
+
     rtl_li(s, ddest, s->pc + 4);
 
     word_t imm = (id_src1->imm >> 12);
@@ -25,17 +33,29 @@ def_EHelper(jal)
     // printf("val = %ld, ext = %ld\n", val << 1, result);
 
     rtl_j(s, s->pc + ext);
-
     // Log("jal. pc = " FMT_WORD ", next = " FMT_WORD, s->pc, s->dnpc);
 }
 
 def_EHelper(jalr)
 {
-  rtl_li(s, s1, s->pc + 4);
-  rtl_addi(s, s0, dsrc1, id_src2->imm);
-  rtl_andi(s, s0, s0, ~(sword_t)1);
-  rtl_jr(s, s0);
-  rtl_mv(s, ddest, s1);
+  if (s->isa.instr.val == 0x00008067) 
+  {
+    trace_func_ret(s->pc); // ret -> jalr x0, 0(x1)
+  } 
+  else if (*(s->dest.preg) == 1) 
+  {
+    trace_func_call(s->pc, s->dnpc, false);
+  } 
+  else if (*(s->dest.preg) == 0 && s->src1.preg != NULL && *(s->src1.preg) == 0) 
+  {
+    trace_func_call(s->pc, s->dnpc, true); // jr rs1 -> jalr x0, 0(rs1), which may be other control flow e.g. 'goto','for'
+  }
+
+    rtl_li(s, s1, s->pc + 4);
+    rtl_addi(s, s0, dsrc1, id_src2->imm);
+    rtl_andi(s, s0, s0, ~(sword_t)1);
+    rtl_jr(s, s0);
+    rtl_mv(s, ddest, s1);
 }
 
 def_EHelper(lui) 
