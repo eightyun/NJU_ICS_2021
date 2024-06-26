@@ -5,24 +5,11 @@
 
 #if !defined(__ISA_NATIVE__) || defined(__NATIVE_USE_KLIB__)
 
-//利用内联汇编实现了系统调用，通过加载系统调用号和字符到相应的寄存器，并触发系统调用来实现字符输出的功能
-void putchar(char c) 
-{
-    asm volatile (
-        "mv a0, %0\n"    // 将系统调用号放入 a0 中
-        "mv a1, %1\n"    // 将字符放入 a1 中
-        "ecall\n"        // 触发系统调用
-        :
-        : "r"(64), "r"((unsigned long)c)  // 输入约束，将 64 放入 a0，c 放入 a1
-        : "a0", "a1"    // 使用的寄存器
-    );
-}
-
 // 输出字符串的简单实现
 void puts(const char* str) 
 {
     while (*str) 
-        putchar(*str++);
+        putch(*str++);
 }
 
 // 输出整数的简单实现
@@ -30,13 +17,13 @@ void putint(int num)
 {
     if (num == 0) 
     {
-        putchar('0');
+        putch('0');
         return;
     }
 
     if (num < 0) 
     {
-        putchar('-');
+        putch('-');
         num = -num;
     }
 
@@ -50,7 +37,7 @@ void putint(int num)
     }
 
     while (i > 0) 
-        putchar(buf[--i]);
+        putch(buf[--i]);
 }
 
 int printf(const char* fmt, ...) 
@@ -79,13 +66,13 @@ int printf(const char* fmt, ...)
             } 
             else 
             {
-                putchar('%');
-                putchar(*fmt);
+                putch('%');
+                putch(*fmt);
             }
         } 
         else 
         {
-            putchar(*fmt);
+            putch(*fmt);
         }
 
         fmt++;
