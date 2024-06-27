@@ -45,13 +45,13 @@ extern "C" {
 
 // ----------------------- TRM: Turing Machine -----------------------
 extern   Area        heap;
-void     putch       (char ch);
-void     halt        (int code) __attribute__((__noreturn__));
+void     putch       (char ch);                                   // 用于向屏幕输出一个字符  
+void     halt        (int code) __attribute__((__noreturn__));    // 用于终止程序
 
 // -------------------- IOE: Input/Output Devices --------------------
-bool     ioe_init    (void);
-void     ioe_read    (int reg, void *buf);
-void     ioe_write   (int reg, void *buf);
+bool     ioe_init    (void);                  // 用于进行IOE相关的初始化操作
+void     ioe_read    (int reg, void *buf);    // 别用于从编号为reg的寄存器中读出内容到缓冲区buf中
+void     ioe_write   (int reg, void *buf);    // 往编号为reg寄存器中写入缓冲区buf中的内容
 #include "amdev.h"
 
 // ---------- CTE: Interrupt Handling and Context Switching ----------
