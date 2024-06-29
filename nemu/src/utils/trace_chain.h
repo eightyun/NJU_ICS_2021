@@ -1,5 +1,5 @@
 #include <elf.h> 
-#include "map.h" 
+#include "device/map.h" 
 
 //------------------------------------iringbuf----------------------------------------------
 void trace_inst(word_t pc, uint32_t inst)  ;
