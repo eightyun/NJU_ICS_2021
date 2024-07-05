@@ -3,11 +3,11 @@
 #include <unistd.h>
 #include <elf.h>
 #include <stdarg.h>
+#include "device/map.h" 
 
 #define MAX_IRINGBUF 64
 #define ANSI_FG_RED "\x1b[31m"
 #define ANSI_NONE "\x1b[0m"
-
 
 typedef struct 
 {
@@ -107,7 +107,7 @@ void ftrace_write(const char *format, ...)
 
 
 // 读取 ELF 文件头并进行基本验证
-static void read_elf_header(int fd, Elf64_Ehdr *eh) 
+void read_elf_header(int fd, Elf64_Ehdr *eh) 
 {
   // 将文件指针重置到文件开始位置
     if (lseek(fd, 0, SEEK_SET) == -1) 
@@ -129,7 +129,7 @@ static void read_elf_header(int fd, Elf64_Ehdr *eh)
 }
 
 // 输出了 ELF 文件头的信息
-static void display_elf_header(Elf64_Ehdr eh) 
+void display_elf_header(Elf64_Ehdr eh) 
 {
     /* Storage capacity class */
     ftrace_write("Storage class\t= ");
@@ -323,7 +323,7 @@ static void display_elf_header(Elf64_Ehdr eh)
 }
 
 //从文件描述符 fd 中读取 ELF 段头 sh 指定的段数据，并将其存储在 dst 指向的内存区域
-static void read_section(int fd, Elf64_Shdr sh, void *dst) 
+void read_section(int fd, Elf64_Shdr sh, void *dst) 
 {
     assert(dst != NULL);
     
@@ -338,7 +338,7 @@ static void read_section(int fd, Elf64_Shdr sh, void *dst)
 }
 
 //函数从文件描述符 fd 中读取 ELF 文件的段头信息，并存储在 sh_tbl 指向的内存区域
-static void read_section_headers(int fd, Elf64_Ehdr eh, Elf64_Shdr *sh_tbl) 
+void read_section_headers(int fd, Elf64_Ehdr eh, Elf64_Shdr *sh_tbl) 
 {
     off_t offset = eh.e_shoff;
     ssize_t size = eh.e_shentsize;
@@ -354,7 +354,7 @@ static void read_section_headers(int fd, Elf64_Ehdr eh, Elf64_Shdr *sh_tbl)
 }
 
 //展示 ELF 文件中的段头信息
-static void display_section_headers(int fd, Elf64_Ehdr eh, Elf64_Shdr sh_tbl[]) 
+void display_section_headers(int fd, Elf64_Ehdr eh, Elf64_Shdr sh_tbl[]) 
 {
     // 动态分配内存以读取段头字符串表
     char *sh_str = malloc(sh_tbl[eh.e_shstrndx].sh_size);
@@ -394,7 +394,7 @@ static void display_section_headers(int fd, Elf64_Ehdr eh, Elf64_Shdr sh_tbl[])
 }
 
 //从 ELF 文件中读取符号表和字符串表，并输出符号表信息。同时，符号表信息存储在全局变量 symbol_tbl 中
-static void read_symbol_table(int fd, Elf64_Ehdr eh, Elf64_Shdr sh_tbl[], int sym_idx) 
+void read_symbol_table(int fd, Elf64_Ehdr eh, Elf64_Shdr sh_tbl[], int sym_idx) 
 {
     // 动态分配内存以读取符号表
     Elf64_Sym *sym_tbl = malloc(sh_tbl[sym_idx].sh_size);
@@ -450,7 +450,7 @@ static void read_symbol_table(int fd, Elf64_Ehdr eh, Elf64_Shdr sh_tbl[], int sy
 }
 
 //遍历 ELF 文件的段头表，并根据段类型调用 read_symbol_table 函数读取符号表
-static void read_symbols(int fd, Elf64_Ehdr eh, Elf64_Shdr sh_tbl[]) 
+void read_symbols(int fd, Elf64_Ehdr eh, Elf64_Shdr sh_tbl[]) 
 {
     for (int i = 0; i < eh.e_shnum; i++) 
         if (sh_tbl[i].sh_type == SHT_SYMTAB || sh_tbl[i].sh_type == SHT_DYNSYM) 
@@ -458,7 +458,7 @@ static void read_symbols(int fd, Elf64_Ehdr eh, Elf64_Shdr sh_tbl[])
 }
 
 //用于初始化一个尾递归调用链表
-static void init_tail_rec_list() 
+void init_tail_rec_list() 
 {
     tail_rec_head = (TailRecNode *)malloc(sizeof(TailRecNode));
     if (tail_rec_head == NULL) 
@@ -498,7 +498,7 @@ void parse_elf(const char *elf_file)
 }
 
 // 用于在符号表中查找目标地址 target 所对应的函数符号
-static int find_symbol_func(paddr_t target, bool is_call) 
+int find_symbol_func(paddr_t target, bool is_call) 
 {
     for (int i = 0; i < symbol_tbl_size; i++) 
     {
@@ -526,7 +526,7 @@ static int find_symbol_func(paddr_t target, bool is_call)
 }
 
 // 用于在尾递归调用链表中插入一个新节点
-static void insert_tail_rec(paddr_t pc, paddr_t depend) 
+void insert_tail_rec(paddr_t pc, paddr_t depend) 
 {
     if (tail_rec_head == NULL) 
         panic("Tail recursion list is not initialized");
@@ -542,7 +542,7 @@ static void insert_tail_rec(paddr_t pc, paddr_t depend)
 }
 
 // 用于从尾递归调用链表中移除头节点后面的第一个节点
-static void remove_tail_rec() 
+void remove_tail_rec() 
 {
     if (tail_rec_head == NULL || tail_rec_head->next == NULL) 
         panic("Tail recursion list is empty or not initialized");
@@ -619,12 +619,12 @@ void trace_func_ret(paddr_t pc)
 
 void trace_dread(paddr_t addr, int len, IOMap *map) 
 {
-	dtrace_write("dtrace: read %10s at " FMT_PADDR ",%d\n",
+	ftrace_write("dtrace: read %10s at " FMT_PADDR ",%d\n",
 		map->name, addr, len);
 }
 
 void trace_dwrite(paddr_t addr, int len, word_t data, IOMap *map) 
 {
-	dtrace_write("dtrace: write %10s at " FMT_PADDR ",%d with " FMT_WORD "\n",
+	ftrace_write("dtrace: write %10s at " FMT_PADDR ",%d with " FMT_WORD "\n",
 		map->name, addr, len, data);
 }
