@@ -2,6 +2,7 @@
 #include <memory/host.h>
 #include <memory/vaddr.h>
 #include <device/map.h>
+#include <trace_chain.h>
 
 #define IO_SPACE_MAX (2 * 1024 * 1024)
 
