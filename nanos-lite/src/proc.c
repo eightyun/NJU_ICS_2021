@@ -1,5 +1,7 @@
 #include <proc.h>
 
+//进程调度
+
 #define MAX_NR_PROC 4
 
 static PCB pcb[MAX_NR_PROC] __attribute__((used)) = {};
