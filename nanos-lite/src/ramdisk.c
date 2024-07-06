@@ -1,5 +1,7 @@
 #include <common.h>
 
+//ramdisk驱动程序
+
 extern uint8_t ramdisk_start;
 extern uint8_t ramdisk_end;
 #define RAMDISK_SIZE ((&ramdisk_end) - (&ramdisk_start))
