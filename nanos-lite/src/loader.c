@@ -1,6 +1,8 @@
 #include <proc.h>
 #include <elf.h>
 
+//加载器
+
 #ifdef __LP64__
 # define Elf_Ehdr Elf64_Ehdr
 # define Elf_Phdr Elf64_Phdr

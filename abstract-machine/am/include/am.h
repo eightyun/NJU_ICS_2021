@@ -26,9 +26,9 @@ typedef struct {
     EVENT_NULL = 0,
     EVENT_YIELD, EVENT_SYSCALL, EVENT_PAGEFAULT, EVENT_ERROR,
     EVENT_IRQ_TIMER, EVENT_IRQ_IODEV,
-  } event;
-  uintptr_t cause, ref;
-  const char *msg;
+  } event;                                      // event表示事件编号
+  uintptr_t cause, ref;                         // cause和ref是一些描述事件的补充信息
+  const char *msg;                              // msg是事件信息字符串
 } Event;
 
 // A protected address space with user memory @area
@@ -55,8 +55,8 @@ void     ioe_write   (int reg, void *buf);    // 往编号为reg寄存器中写�
 #include "amdev.h"
 
 // ---------- CTE: Interrupt Handling and Context Switching ----------
-bool     cte_init    (Context *(*handler)(Event ev, Context *ctx));
-void     yield       (void);
+bool     cte_init    (Context *(*handler)(Event ev, Context *ctx));     // 用于进行CTE相关的初始化操作. 其中它还接受一个来自操作系统的事件处理回调函数的指针
+void     yield       (void);                                            // 用于进行自陷操作
 bool     ienabled    (void);
 void     iset        (bool enable);
 Context *kcontext    (Area kstack, void (*entry)(void *), void *arg);
