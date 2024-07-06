@@ -1,5 +1,7 @@
 #include <memory.h>
 
+//存储管理
+
 static void *pf = NULL;
 
 void* new_page(size_t nr_page) {
