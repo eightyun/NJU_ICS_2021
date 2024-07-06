@@ -6,10 +6,10 @@
 // https://ibex-core.readthedocs.io/en/latest/03_reference/cs_registers.html#
 #define CSR_START_ADDR 0x180
 #define CSR_SATP 0x180
-#define CSR_MSTATUS 0x300
-#define CSR_MTVEC 0x305
-#define CSR_MEPC 0x341
-#define CSR_MCAUSE 0x342
+#define CSR_MSTATUS 0x300       // mstatus寄存器地址 - 存放处理器的状态
+#define CSR_MTVEC 0x305         // mtvec（机器模式陷阱向量寄存器）-用于保存异常和中断处理程序的入口地址
+#define CSR_MEPC 0x341          // mepc寄存器地址 - 存放触发异常的PC
+#define CSR_MCAUSE 0x342        // mcause寄存器地址 - 存放触发异常的原因
 #define CSR_END_ADDR 0x346
 #define MIE 3
 #define MPIE 7
@@ -20,30 +20,33 @@
 
 typedef struct 
 {
+    // 通用寄存器
     union {
         uint64_t _64;
     } gpr[32];
-    vaddr_t pc;
+    vaddr_t pc;                                       // 程序计数器
+
+    // 控制状态寄存器
     union {
         uint64_t _64;
     } csr[CSR_END_ADDR - CSR_START_ADDR];
-    bool INTR;
+    bool INTR;                                      // 中断标志
 } riscv64_CPU_state;
 
 extern riscv64_CPU_state cpu;
-#define csr(idx) (cpu.csr[idx - CSR_START_ADDR]._64)
+#define csr(idx) (cpu.csr[idx - CSR_START_ADDR]._64)      // 用于访问特定的CSR寄存器
 
+// 开启中断
 static inline void enable_intr() 
 {
     word_t st = csr(CSR_MSTATUS);
     // move MPIE to to MIE
     word_t b = ((st >> MPIE) & 0x1) << MIE;
-    // turn off MIE
-    // turn on MPIE
     word_t off = (st & (~(1 << MIE))) | (1 << MPIE);
     csr(CSR_MSTATUS) = b | off;
 }
 
+// 禁用中断
 static inline void disable_intr() 
 {
     word_t st = csr(CSR_MSTATUS);
@@ -53,6 +56,8 @@ static inline void disable_intr()
     word_t off = st & (~((1 << MPIE) | (1 << MIE)));
     csr(CSR_MSTATUS) = b | off;
 }
+
+// 检查寄存器状态
 static inline bool is_intr_enabled() 
 {
     word_t st = csr(CSR_MSTATUS);
