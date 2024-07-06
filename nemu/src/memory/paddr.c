@@ -2,6 +2,7 @@
 #include <memory/paddr.h>
 #include <device/mmio.h>
 #include <isa.h>
+#include "../../utils/trace_chain.h"
 
 #if   defined(CONFIG_TARGET_AM)
 static uint8_t *pmem = NULL;
